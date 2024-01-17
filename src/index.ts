@@ -3,19 +3,35 @@ import express from "express";
 import path from "path";
 import { logger } from "./middleware/logs";
 import product_routes from "./routes/products";
+import { dataSource } from "./dataSource";
 
-const app = express();
-app.use(express.json()); //middleware
+const main = async () => {
+  dataSource
+    .initialize()
+    .then(() => {
+      console.log("initialized successfully");
+    })
+    .catch((err: unknown) => {
+      console.log("data source initialization error occurred: ", err);
+    });
 
-app.use(logger);
-app.use(bodyParser.urlencoded({ extended: true }));
+  const app = express();
+  app.use(express.json()); //middleware
 
-// Serving static files
-app.use(express.static(path.join(__dirname, "../src/public")));
+  app.use(logger);
+  app.use(bodyParser.urlencoded({ extended: true }));
 
-const port = 3000;
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+  // Serving static files
+  app.use(express.static(path.join(__dirname, "../src/public")));
+
+  const port = 3000;
+  app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+  });
+
+  app.use("/api/products", product_routes);
+};
+
+main().catch((err) => {
+  console.log(err);
 });
-
-app.use("/api/products", product_routes);
