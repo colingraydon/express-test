@@ -1,6 +1,8 @@
-import { ProductType } from "../types";
 import { products } from "../data";
 import { Request, Response } from "express";
+import { User } from "../entities/User";
+import { dataSource } from "../dataSource";
+import bcryptjs from "bcryptjs";
 
 export const getProducts = (_: Request, res: Response) => {
   res.json(products);
@@ -16,33 +18,42 @@ export const getProduct = (req: Request, res: Response) => {
   return res.json(product);
 };
 
-export const createProduct = (req: Request, res: Response) => {
-  const newProduct: ProductType = {
-    id: products.length + 1,
-    name: req.body.name,
-    price: req.body.price,
-  };
-
-  products.push(newProduct);
-  return res.status(201).json(newProduct);
+export const getAllUsers = async (_: Request, res: Response) => {
+  // const users = await User.find();
+  // console.log("in getAllUsers");
+  // console.log(users);
+  res.send("hello");
 };
 
-export const updateProduct = (req: Request, res: Response) => {
-  const id: number = Number(req.params.productID);
-  const index: number = products.findIndex((product) => product.id === id);
+export const createUser = async (req: Request, res: Response) => {
+  const { username, password, email } = req.body;
 
-  if (index === -1) {
-    return res.status(404).send("Product not found");
+  const hashedPassword = await bcryptjs.hash(password, 10);
+  let user;
+
+  try {
+    const result = await dataSource
+      .createQueryBuilder()
+      .insert()
+      .into(User)
+      .values({
+        username: username,
+        password: hashedPassword,
+        email: email,
+      })
+      .returning("*")
+      .execute();
+    user = result.raw[0];
+  } catch (err) {
+    //code taken from stack trace
+    if (err.code === "23505") {
+      return res.status(400).send("User already exists");
+    }
   }
 
-  const updatedProduct: ProductType = {
-    id: products[index].id,
-    name: req.body.name,
-    price: req.body.price,
-  };
-
-  products[index] = updatedProduct;
-  return res.status(200).json("Product updated");
+  return res
+    .status(201)
+    .json({ message: "User created successfully", user: user });
 };
 
 export const deleteProduct = (req: Request, res: Response) => {
