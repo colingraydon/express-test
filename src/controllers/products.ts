@@ -16,6 +16,7 @@ export const getProduct = (req: Request, res: Response) => {
   return res.json(product);
 };
 
+//curl -X POST -H "Content-Type: application/json" -d '{"name": "keyboard", "price": 5}' http://localhost:3000/api/products
 export const createProduct = (req: Request, res: Response) => {
   const newProduct: ProductType = {
     id: products.length + 1,
@@ -27,6 +28,7 @@ export const createProduct = (req: Request, res: Response) => {
   return res.status(201).json(newProduct);
 };
 
+//curl -X PUT -H "Content-Type: application/json" -d '{"name": "keyboard", "price": 55}' http://localhost:3000/api/products/4
 export const updateProduct = (req: Request, res: Response) => {
   const id: number = Number(req.params.productID);
   const index: number = products.findIndex((product) => product.id === id);
