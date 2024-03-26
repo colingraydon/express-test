@@ -4,6 +4,7 @@ import { Repository } from "typeorm";
 import { dataSource } from "../dataSource";
 import { Notification } from "../entities/Notification";
 import { User } from "../entities/User";
+import { products } from "../data";
 
 export const getAllUsers = async (_: Request, res: Response) => {
   const users = await User.find();
