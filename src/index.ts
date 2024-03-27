@@ -24,14 +24,6 @@ const main = async () => {
   // Serving static files
   app.use(express.static(path.join(__dirname, "../src/public")));
 
-  app.get("/", (_, res) => {
-    res.send("Hello World!");
-  });
-
-  // app.get("/users/", (_, res) => {
-  //   res.send("Hello Users!");
-  // });
-
   const port = 3000;
   app.listen(port, () => {
     console.log(`Server is running on port ${port}`);

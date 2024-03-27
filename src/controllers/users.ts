@@ -4,8 +4,8 @@ import { Repository } from "typeorm";
 import { dataSource } from "../dataSource";
 import { Notification } from "../entities/Notification";
 import { User } from "../entities/User";
-import { products } from "../data";
 
+// curl -X GET http://localhost:3000/users
 export const getAllUsers = async (_: Request, res: Response) => {
   const users = await User.find();
   console.log(users);
@@ -16,7 +16,7 @@ export const getAllUsers = async (_: Request, res: Response) => {
   return res.status(200).json(users);
 };
 
-// curl -X DELETE -H "Content-Type: application/json" -d '{"id": 2}' http://localhost:3000/api/users
+// curl -X DELETE -H "Content-Type: application/json" -d '{"id": 2}' http://localhost:3000/users
 export const deleteUser = async (req: Request, res: Response) => {
   //NOTE - check authentication first. If not authenticated, return 401. do this with middleware
   const userId: number = Number(req.params.userID);
@@ -72,6 +72,7 @@ export const getNotificationsByUser = async (req: Request, res: Response) => {
   return res.status(200).send(user[0]);
 };
 
+// curl -X POST -H "Content-Type: application/json" -d '{"notification": "2nd notif", "text": "2nd notification"}' http://localhost:3000/users/colin
 export const createNotification = async (req: Request, res: Response) => {
   console.log("createNotification called");
   const notificationMsg: string = req.body.notification;
